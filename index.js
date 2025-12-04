@@ -4,7 +4,7 @@ const PORT = process.env.PORT
 const dotenv = require('dotenv')
 dotenv.config()
 const mongoose = require('mongoose')
-const URI = process.env.MONGO_URI
+const MONGO_URI = process.env.MONGO_URI
 app.set('view engine', 'ejs')
 const Donor = require('./models/donor.models')
 const donorRoutes = require('./routes/donor.routes')
@@ -28,7 +28,7 @@ app.use('/ngo', ngoRoutes)
 app.use('/contact', contactRoutes)
 
 mongoose
-    .connect(URI)
+    .connect(MONGO_URI)
     .then(() => console.log("MongoDB connected"))
     .catch((err) => console.log(err));
 
