@@ -1,5 +1,5 @@
 const Contact = require('../models/contact.models')
-const { sendContactNotificationEmail, sendConfirmationEmail } = require('../utils/emailService')
+const { sendContactNotificationEmail, sendContactConfirmationEmail } = require('../utils/emailService')
 
 const submitMessage = async (req, res) => {
     const { name, email, subject, message } = req.body
@@ -23,7 +23,7 @@ const submitMessage = async (req, res) => {
             message
         })
 
-        await sendConfirmationEmail(email, name)
+        await sendContactConfirmationEmail(email, name)
 
         return res.status(201).json({
             success: true,
