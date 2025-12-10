@@ -1,42 +1,9 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const Donor = require('../models/donor.models')
-const nodemailer = require('nodemailer')
+const { sendDonorWelcomeEmail } = require('../utils/emailService')
 
 const JWT_SECRET = process.env.JWT_SECRET
-const EMAIL_USER = process.env.EMAIL_USER
-const EMAIL_PASS = process.env.EMAIL_PASS
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: EMAIL_USER,
-        pass: EMAIL_PASS,
-    }
-})
-
-const sendDonorWelcomeEmail = async (donorName, donorEmail) => {
-    try {
-        const mailOptions = {
-            from: EMAIL_USER,
-            to: donorEmail,
-            subject: 'Welcome to Good Heart Charity Platform!',
-            html: `
-                <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
-                    <h2 style="color: #333;">Welcome, ${donorName}!</h2>
-                    <p style="color: #666; font-size: 16px;">Your signup was successful.</p>
-                    <p style="color: #666; font-size: 16px;">Thank you for joining Good Heart Charity Platform. Your contribution makes a difference!</p>
-                    <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-                    <p style="color: #999; font-size: 14px;">Best regards,<br><strong>Good Heart Charity Team</strong></p>
-                </div>
-            `
-        }
-        await transporter.sendMail(mailOptions)
-        console.log('Donor welcome email sent successfully')
-    } catch (err) {
-        console.error('Error sending donor welcome email:', err)
-    }
-}
 
 const getSignUp = (req, res) => {
     res.send('signup')

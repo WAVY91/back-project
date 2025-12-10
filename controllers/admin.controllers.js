@@ -3,9 +3,69 @@ const bcrypt = require('bcryptjs')
 const Admin = require('../models/admin.models')
 const NGO = require('../models/ngo.models')
 const Contact = require('../models/contact.models')
+const nodemailer = require('nodemailer')
 
 const JWT_SECRET = process.env.JWT_SECRET
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL
+const EMAIL_USER = process.env.EMAIL_USER
+const EMAIL_PASS = process.env.EMAIL_PASS
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: EMAIL_USER,
+        pass: EMAIL_PASS,
+    }
+})
+
+const sendNGOApprovalEmail = async (ngoEmail, ngoName, contactPersonName) => {
+    try {
+        const mailOptions = {
+            from: EMAIL_USER,
+            to: ngoEmail,
+            subject: 'NGO Registration Approved - Good Heart Charity Platform',
+            html: `
+                <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
+                    <h2 style="color: #28a745;">Congratulations, ${contactPersonName}!</h2>
+                    <p style="color: #666; font-size: 16px;">Your NGO <strong>${ngoName}</strong> has been approved and verified on Good Heart Charity Platform.</p>
+                    <p style="color: #666; font-size: 16px;">You can now log in and access all platform features to connect with donors and manage your charitable initiatives.</p>
+                    <p style="color: #666; font-size: 16px;">Thank you for your dedication to making a difference!</p>
+                    <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                    <p style="color: #999; font-size: 14px;">Best regards,<br><strong>Good Heart Charity Team</strong></p>
+                </div>
+            `
+        }
+        await transporter.sendMail(mailOptions)
+        console.log('NGO approval email sent successfully')
+    } catch (err) {
+        console.error('Error sending NGO approval email:', err)
+    }
+}
+
+const sendNGORejectionEmail = async (ngoEmail, ngoName, contactPersonName) => {
+    try {
+        const mailOptions = {
+            from: EMAIL_USER,
+            to: ngoEmail,
+            subject: 'NGO Registration Update - Good Heart Charity Platform',
+            html: `
+                <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
+                    <h2 style="color: #dc3545;">Registration Status Update</h2>
+                    <p style="color: #666; font-size: 16px;">Dear ${contactPersonName},</p>
+                    <p style="color: #666; font-size: 16px;">Thank you for your interest in registering <strong>${ngoName}</strong> on Good Heart Charity Platform.</p>
+                    <p style="color: #666; font-size: 16px;">After careful review, your registration has been rejected. Please contact our support team for more information.</p>
+                    <p style="color: #666; font-size: 16px;">We encourage you to apply again in the future.</p>
+                    <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                    <p style="color: #999; font-size: 14px;">Best regards,<br><strong>Good Heart Charity Team</strong></p>
+                </div>
+            `
+        }
+        await transporter.sendMail(mailOptions)
+        console.log('NGO rejection email sent successfully')
+    } catch (err) {
+        console.error('Error sending NGO rejection email:', err)
+    }
+}
 
 const postAdminSignUp = async (req, res) => {
     const { email, password } = req.body
@@ -105,15 +165,17 @@ const approveNGO = async (req, res) => {
         const { ngoId } = req.params;
         const ngo = await NGO.findByIdAndUpdate(
             ngoId,
-            { status: 'active', verified: true },
+            { status: 'active', verified: true, registrationStatus: 'approved' },
             { new: true }
         ).select('-password');
         
         if (!ngo) {
             return res.status(404).json({ success: false, message: "NGO not found" });
         }
+
+        sendNGOApprovalEmail(ngo.email, ngo.ngoName, ngo.name).catch(err => console.error('Background task error:', err))
         
-        res.status(200).json({ success: true, message: "NGO approved successfully!", data: ngo });
+        res.status(200).json({ success: true, message: "NGO approved successfully! Approval email sent.", data: ngo });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ success: false, message: "Server Error" });
@@ -125,15 +187,17 @@ const rejectNGO = async (req, res) => {
         const { ngoId } = req.params;
         const ngo = await NGO.findByIdAndUpdate(
             ngoId,
-            { status: 'rejected' },
+            { status: 'rejected', registrationStatus: 'rejected' },
             { new: true }
         ).select('-password');
         
         if (!ngo) {
             return res.status(404).json({ success: false, message: "NGO not found" });
         }
+
+        sendNGORejectionEmail(ngo.email, ngo.ngoName, ngo.name).catch(err => console.error('Background task error:', err))
         
-        res.status(200).json({ success: true, message: "NGO rejected", data: ngo });
+        res.status(200).json({ success: true, message: "NGO rejected! Rejection email sent.", data: ngo });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ success: false, message: "Server Error" });
