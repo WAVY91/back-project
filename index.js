@@ -14,7 +14,7 @@ const contactRoutes = require('./routes/contact.routes')
 const cors = require('cors')
 
 app.use(cors({
-    origin: ['https://front-project-phi.vercel.app'],
+    origin: ['https://front-project-phi.vercel.app', 'http://localhost:3000', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true
 }))

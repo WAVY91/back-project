@@ -85,9 +85,10 @@ const sendContactNotificationEmail = async (contactData) => {
         }
 
         await transporter.sendMail(mailOptions)
+        console.log('✅ Admin notification email sent to:', ADMIN_EMAIL)
         return { success: true, message: 'Email sent to admin' }
     } catch (err) {
-        console.error('Error sending email:', err)
+        console.error('❌ Error sending admin notification email:', err.message)
         return { success: false, message: 'Failed to send email notification' }
     }
 }
@@ -110,9 +111,10 @@ const sendContactConfirmationEmail = async (userEmail, userName) => {
         }
 
         await transporter.sendMail(mailOptions)
+        console.log('✅ User confirmation email sent to:', userEmail)
         return { success: true, message: 'Confirmation email sent' }
     } catch (err) {
-        console.error('Error sending confirmation email:', err)
+        console.error('❌ Error sending user confirmation email:', err.message)
         return { success: false, message: 'Failed to send confirmation email' }
     }
 }

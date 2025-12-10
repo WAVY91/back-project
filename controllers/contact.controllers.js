@@ -16,15 +16,22 @@ const submitMessage = async (req, res) => {
             message,
         })
 
-        await Promise.all([
-            sendContactNotificationEmail({
-                name,
-                email,
-                subject,
-                message
-            }),
-            sendContactConfirmationEmail(email, name)
-        ])
+        // Send emails but don't block the response
+        try {
+            await Promise.all([
+                sendContactNotificationEmail({
+                    name,
+                    email,
+                    subject,
+                    message
+                }),
+                sendContactConfirmationEmail(email, name)
+            ])
+            console.log('✅ Emails sent successfully for message:', newMessage._id)
+        } catch (emailErr) {
+            console.error('⚠️ Email sending failed:', emailErr.message)
+            // Continue even if emails fail - message is still saved
+        }
 
         res.status(201).json({
             success: true,
@@ -33,7 +40,7 @@ const submitMessage = async (req, res) => {
         })
 
     } catch (err) {
-        console.error(err)
+        console.error('❌ Contact submission error:', err)
         return res.status(500).json({ success: false, message: "Server Error" })
     }
 }
