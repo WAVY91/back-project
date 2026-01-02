@@ -12,4 +12,16 @@ router.get('/campaigns/:campaignId', getCampaignById)
 router.post('/campaigns/:campaignId/donate', donateToCampaign)
 router.get('/:donorId/donation-history', getDonorDonationHistory)
 
+// Alias route for frontend compatibility
+router.post('/submit', (req, res) => {
+    // Extract campaignId from request body if frontend sends it there
+    const { campaignId, ...donationData } = req.body
+    if (!campaignId) {
+        return res.status(400).json({ success: false, message: 'campaignId is required' })
+    }
+    // Forward to the actual donate endpoint
+    req.params.campaignId = campaignId
+    donateToCampaign(req, res)
+})
+
 module.exports = router
