@@ -40,8 +40,14 @@ const postSignUp = async (req, res) => {
     let emailResult = { success: false, message: 'Welcome email not sent' }
     try {
         emailResult = await sendDonorWelcomeEmail(name, email)
+        if (emailResult.success) {
+            console.log(`✅ Donor welcome email sent to ${email} for ${name}`)
+        } else {
+            console.error(`⚠️ Donor welcome email failed: ${emailResult.message}`)
+        }
     } catch (err) {
-        console.error('Error sending donor welcome email:', err)
+        console.error(`❌ Error sending donor welcome email to ${email}:`, err.message || err)
+        emailResult = { success: false, message: err.message || 'Unknown error' }
     }
 
     res.status(201).json({ 

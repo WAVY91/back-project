@@ -1,0 +1,6 @@
+nohup: ignoring input
+[dotenv@17.2.3] injecting env (6) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+Server is running on port 4500
+MongoDB is connected
+✅ Donor welcome email sent to alice.donor@example.com for Alice Johnson
+✅ NGO welcome email sent to bob.ngo@example.com for Hope Foundation (Contact: Bob Manager)
