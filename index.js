@@ -21,8 +21,6 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
-// Explicitly handle OPTIONS requests for preflight
-app.options('*', cors(corsOptions))
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
