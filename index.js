@@ -13,11 +13,16 @@ const ngoRoutes = require('./routes/ngo.routes')
 const contactRoutes = require('./routes/contact.routes')
 const cors = require('cors')
 
-app.use(cors({
+const corsOptions = {
     origin: ['https://front-project-phi.vercel.app', 'http://localhost:3000', 'http://localhost:5173'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    credentials: true
-}))
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+app.use(cors(corsOptions))
+// Explicitly handle OPTIONS requests for preflight
+app.options('*', cors(corsOptions))
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
@@ -26,6 +31,8 @@ app.use('/donor', donorRoutes)
 app.use('/admin', adminRoutes)
 app.use('/ngo', ngoRoutes)
 app.use('/contact', contactRoutes)
+// Add /donation as an alias to /donor for frontend compatibility
+app.use('/donation', donorRoutes)
 
 mongoose
     .connect(MONGO_URI)
