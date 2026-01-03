@@ -29,12 +29,11 @@ app.use('/donor', donorRoutes)
 app.use('/admin', adminRoutes)
 app.use('/ngo', ngoRoutes)
 app.use('/contact', contactRoutes)
-// Add /donation as an alias to /donor for frontend compatibility
 app.use('/donation', donorRoutes)
 
 mongoose
     .connect(MONGO_URI)
-    .then(() => console.log("MongoDB is connected"))
+    .then(() => console.log("MongoDB is connected."))
     .catch((err) => console.log(err));
 
 app.listen(4500, () => console.log('Server is running on port 4500'))

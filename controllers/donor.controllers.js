@@ -36,7 +36,6 @@ const postSignUp = async (req, res) => {
         password: hashedPassword,
     });
 
-    // attempt to send welcome email and include outcome in the response
     let emailResult = { success: false, message: 'Welcome email not sent' }
     try {
         emailResult = await sendDonorWelcomeEmail(name, email)
@@ -168,12 +167,10 @@ const donateToCampaign = async (req, res) => {
             return res.status(403).json({ success: false, message: "This campaign is not currently active" });
         }
 
-        // Check if donor already donated to this campaign
         const existingDonation = campaign.donors.find(d => d.donorId.toString() === donorId);
         
         let isNewDonor = false;
         if (!existingDonation) {
-            // New donor to this campaign
             isNewDonor = true;
             campaign.totalDonorsCount += 1;
             campaign.donors.push({
