@@ -53,6 +53,13 @@ let ngoSchema = new mongoose.Schema({
         default: 'pending_verification',
     },
 
+    campaigns: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'campaign',
+        },
+    ],
+
     createdAt: {
         type: Date,
         default: Date.now,

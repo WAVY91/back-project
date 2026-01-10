@@ -133,8 +133,8 @@ const createCampaign = async (req, res) => {
             return res.status(404).json({ success: false, message: "NGO not found" });
         }
 
-        if (ngo.status !== 'active') {
-            return res.status(403).json({ success: false, message: "Only active NGOs can create campaigns" });
+        if (ngo.status === 'rejected') {
+            return res.status(403).json({ success: false, message: "Rejected NGOs cannot create campaigns" });
         }
 
         const newCampaign = await Campaign.create({
@@ -144,6 +144,13 @@ const createCampaign = async (req, res) => {
             goalAmount,
             status: 'pending',
         });
+
+        // Also store in the NGO's campaigns array
+        await NGO.findByIdAndUpdate(ngoId, {
+            $push: { campaigns: newCampaign._id }
+        });
+
+        console.log(`✅ Campaign created successfully: "${title}" by NGO: ${ngo.ngoName}`);
 
         res.status(201).json({
             success: true,
