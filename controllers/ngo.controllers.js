@@ -145,7 +145,6 @@ const createCampaign = async (req, res) => {
             status: 'pending',
         });
 
-        // Also store in the NGO's campaigns array
         await NGO.findByIdAndUpdate(ngoId, {
             $push: { campaigns: newCampaign._id }
         });
