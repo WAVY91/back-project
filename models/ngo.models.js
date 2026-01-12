@@ -31,26 +31,10 @@ let ngoSchema = new mongoose.Schema({
         required: [true, 'Organization description is required!'],
     },
 
-    status: {
-        type: String,
-        enum: ['pending', 'active', 'rejected'],
-        default: 'pending',
-    },
-
-    verified: {
-        type: Boolean,
-        default: false,
-    },
-
-    registrationDoc: {
-        type: String,
-        default: 'pending_verification',
-    },
-
     registrationStatus: {
         type: String,
-        enum: ['pending_verification', 'approved', 'rejected'],
-        default: 'pending_verification',
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending',
     },
 
     campaigns: [

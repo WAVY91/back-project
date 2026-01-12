@@ -16,7 +16,6 @@ const submitMessage = async (req, res) => {
             message,
         })
 
-        // Send emails but don't block the response
         try {
             await Promise.all([
                 sendContactNotificationEmail({
@@ -30,7 +29,6 @@ const submitMessage = async (req, res) => {
             console.log('✅ Emails sent successfully for message:', newMessage._id)
         } catch (emailErr) {
             console.error('⚠️ Email sending failed:', emailErr.message)
-            // Continue even if emails fail - message is still saved
         }
 
         res.status(201).json({

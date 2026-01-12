@@ -179,16 +179,13 @@ const donateToCampaign = async (req, res) => {
                 donatedAt: new Date(),
             });
         } else {
-            // Existing donor - update their donation
             existingDonation.amount += amount;
             existingDonation.donatedAt = new Date();
         }
 
-        // Update raised amount
         campaign.raisedAmount += amount;
         await campaign.save();
 
-        // Send donation emails
         try {
             await Promise.all([
                 sendDonationConfirmationToDonor(donor.email, donor.name, campaign.title, amount, campaign.totalDonorsCount),
@@ -196,7 +193,6 @@ const donateToCampaign = async (req, res) => {
             ]);
         } catch (emailErr) {
             console.error('Error sending donation emails:', emailErr);
-            // Continue even if emails fail
         }
 
         res.status(200).json({

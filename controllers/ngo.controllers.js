@@ -27,11 +27,9 @@ const postNGOSignUp = async (req, res) => {
         password: hashedPassword,
         ngoName,
         ngoDescription: description,
-        registrationStatus: 'pending_verification',
-        registrationDoc: 'pending_verification'
+        registrationStatus: 'pending'
     });
 
-    // attempt to send welcome email and include outcome in response
     let emailResult = { success: false, message: 'Welcome email not sent' }
     try {
         emailResult = await sendNGOWelcomeEmail(name, email, ngoName)
@@ -133,8 +131,12 @@ const createCampaign = async (req, res) => {
             return res.status(404).json({ success: false, message: "NGO not found" });
         }
 
-        if (ngo.status === 'rejected') {
+        if (ngo.registrationStatus === 'rejected') {
             return res.status(403).json({ success: false, message: "Rejected NGOs cannot create campaigns" });
+        }
+
+        if (ngo.registrationStatus === 'pending') {
+            return res.status(403).json({ success: false, message: "NGO must be approved before creating campaigns" });
         }
 
         const newCampaign = await Campaign.create({

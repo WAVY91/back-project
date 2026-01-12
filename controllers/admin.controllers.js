@@ -153,7 +153,7 @@ const postAdminSignIn = async (req, res) => {
 
 const getPendingNGOs = async (req, res) => {
     try {
-        const pendingNGOs = await NGO.find({ status: 'pending' }).select('-password');
+        const pendingNGOs = await NGO.find({ registrationStatus: 'pending' }).select('-password');
         res.status(200).json({ success: true, data: pendingNGOs });
     } catch (err) {
         console.error(err);
@@ -166,7 +166,7 @@ const approveNGO = async (req, res) => {
         const { ngoId } = req.params;
         const ngo = await NGO.findByIdAndUpdate(
             ngoId,
-            { status: 'active', verified: true, registrationStatus: 'approved' },
+            { registrationStatus: 'approved' },
             { new: true }
         ).select('-password');
         
@@ -188,7 +188,7 @@ const rejectNGO = async (req, res) => {
         const { ngoId } = req.params;
         const ngo = await NGO.findByIdAndUpdate(
             ngoId,
-            { status: 'rejected', registrationStatus: 'rejected' },
+            { registrationStatus: 'rejected' },
             { new: true }
         ).select('-password');
         
