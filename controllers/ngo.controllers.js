@@ -118,10 +118,13 @@ const getNGOs = async (req, res) => {
 };
 
 const createCampaign = async (req, res) => {
-    const { ngoId } = req.params;
+    const ngoId = req.params.ngoId || req.body.ngoId;
     const { title, description, goalAmount } = req.body;
 
     try {
+        if (!ngoId) {
+            return res.status(400).json({ success: false, message: "NGO ID is required" });
+        }
         if (!title || !description || !goalAmount) {
             return res.status(400).json({ success: false, message: "Title, description, and goal amount are required" });
         }

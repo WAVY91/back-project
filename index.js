@@ -11,6 +11,7 @@ const donorRoutes = require('./routes/donor.routes')
 const adminRoutes = require('./routes/admin.routes')
 const ngoRoutes = require('./routes/ngo.routes')
 const contactRoutes = require('./routes/contact.routes')
+const campaignRoutes = require('./routes/campaign.routes')
 const cors = require('cors')
 
 const corsOptions = {
@@ -30,6 +31,7 @@ app.use('/admin', adminRoutes)
 app.use('/ngo', ngoRoutes)
 app.use('/contact', contactRoutes)
 app.use('/donation', donorRoutes)
+app.use('/campaign', campaignRoutes)
 
 mongoose
     .connect(MONGO_URI)
