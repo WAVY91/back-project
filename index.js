@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 4500
 const dotenv = require('dotenv')
 dotenv.config()
 const mongoose = require('mongoose')
@@ -38,4 +38,4 @@ mongoose
     .then(() => console.log("MongoDB is connected."))
     .catch((err) => console.log(err));
 
-app.listen(4500, () => console.log('Server is running on port 4500'))
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`))

@@ -147,7 +147,7 @@ const createCampaign = async (req, res) => {
             description,
             ngoId,
             goalAmount,
-            status: 'pending',
+            status: 'active',
         });
 
         await NGO.findByIdAndUpdate(ngoId, {
@@ -158,7 +158,7 @@ const createCampaign = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: "Campaign created successfully! Pending admin approval.",
+            message: "Campaign created successfully and is now live!",
             data: newCampaign,
         });
 
