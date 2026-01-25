@@ -180,4 +180,34 @@ const getNGOCampaigns = async (req, res) => {
     }
 };
 
-module.exports = {postNGOSignUp, postNGOSignIn, getNGOs, createCampaign, getNGOCampaigns}
+const updateCampaign = async (req, res) => {
+    const { campaignId } = req.params;
+    const { title, description, goalAmount } = req.body;
+
+    try {
+        const campaign = await Campaign.findById(campaignId);
+        if (!campaign) {
+            return res.status(404).json({ success: false, message: "Campaign not found" });
+        }
+
+        const updatedCampaign = await Campaign.findByIdAndUpdate(
+            campaignId,
+            { title, description, goalAmount },
+            { new: true, runValidators: true }
+        );
+
+        console.log(`✅ Campaign updated successfully: "${updatedCampaign.title}"`);
+
+        res.status(200).json({
+            success: true,
+            message: "Campaign updated successfully!",
+            data: updatedCampaign,
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
+
+module.exports = {postNGOSignUp, postNGOSignIn, getNGOs, createCampaign, getNGOCampaigns, updateCampaign}
