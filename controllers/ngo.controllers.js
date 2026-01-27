@@ -176,14 +176,23 @@ const getNGOCampaigns = async (req, res) => {
             return res.status(400).json({ success: false, message: "NGO ID is required" });
         }
 
-        const campaigns = await Campaign.find({ ngoId: ngoId }).populate('ngoId', 'ngoName -_id');
-        campaigns = campaigns.map(campaign => ({
-            ...campaign.toObject(),
-            ngoId: campaign.ngoId?._id || campaign.ngoId
-        }));
-        res.status(200).json({ success: true, data: campaigns });
+        // Find campaigns for this NGO
+        const campaigns = await Campaign.find({ ngoId: ngoId })
+            .populate('ngoId', 'ngoName');
+        
+        // Map campaigns to ensure ngoId is preserved as the original ID
+        const result = campaigns.map(campaign => {
+            const campaignData = JSON.parse(JSON.stringify(campaign));
+            // Restore ngoId as the original ObjectId if it was populated
+            if (campaign.ngoId && campaign.ngoId._id) {
+                campaignData.ngoId = campaign.ngoId._id;
+            }
+            return campaignData;
+        });
+        
+        res.status(200).json({ success: true, data: result });
     } catch (err) {
-        console.error(err);
+        console.error('Error in getNGOCampaigns:', err);
         return res.status(500).json({ success: false, message: "Server Error" });
     }
 };
