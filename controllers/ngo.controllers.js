@@ -227,4 +227,35 @@ const updateCampaign = async (req, res) => {
     }
 };
 
-module.exports = {postNGOSignUp, postNGOSignIn, getNGOs, createCampaign, getNGOCampaigns, updateCampaign}
+
+const deleteCampaign = async (req, res) => {
+    const { campaignId } = req.params;
+
+    try {
+        const campaign = await Campaign.findById(campaignId);
+        if (!campaign) {
+            return res.status(404).json({ success: false, message: "Campaign not found" });
+        }
+
+        // Delete the campaign
+        await Campaign.findByIdAndDelete(campaignId);
+
+        // Remove campaign from NGO's campaigns array
+        await NGO.findByIdAndUpdate(campaign.ngoId, {
+            $pull: { campaigns: campaignId }
+        });
+
+        console.log(`✅ Campaign deleted successfully: "${campaign.title}"`);
+
+        res.status(200).json({
+            success: true,
+            message: "Campaign deleted successfully!",
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
+
+module.exports = {postNGOSignUp, postNGOSignIn, getNGOs, createCampaign, getNGOCampaigns, updateCampaign, deleteCampaign}

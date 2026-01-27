@@ -5,7 +5,8 @@ const { getAllCampaigns } = require('../controllers/admin.controllers');
 const {
     createCampaign,
     getNGOCampaigns,
-    updateCampaign
+    updateCampaign,
+    deleteCampaign
 } = require('../controllers/ngo.controllers');
 
 // =====================
@@ -25,5 +26,8 @@ router.get('/ngo/:ngoId', getNGOCampaigns);
 
 // Update a campaign
 router.patch('/:campaignId', updateCampaign);
+
+// Delete a campaign
+router.delete('/:campaignId', deleteCampaign);
 
 module.exports = router;
