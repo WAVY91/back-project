@@ -172,7 +172,11 @@ const getNGOCampaigns = async (req, res) => {
     const { ngoId } = req.params;
 
     try {
-        const campaigns = await Campaign.find({ ngoId }).populate('ngoId', 'ngoName');
+        if (!ngoId) {
+            return res.status(400).json({ success: false, message: "NGO ID is required" });
+        }
+
+        const campaigns = await Campaign.find({ ngoId: ngoId }).populate('ngoId', 'ngoName');
         res.status(200).json({ success: true, data: campaigns });
     } catch (err) {
         console.error(err);
