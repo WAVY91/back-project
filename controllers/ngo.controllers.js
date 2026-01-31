@@ -176,14 +176,11 @@ const getNGOCampaigns = async (req, res) => {
             return res.status(400).json({ success: false, message: "NGO ID is required" });
         }
 
-        // Find campaigns for this NGO
         const campaigns = await Campaign.find({ ngoId: ngoId })
             .populate('ngoId', 'ngoName');
         
-        // Map campaigns to ensure ngoId is preserved as the original ID
         const result = campaigns.map(campaign => {
             const campaignData = JSON.parse(JSON.stringify(campaign));
-            // Restore ngoId as the original ObjectId if it was populated
             if (campaign.ngoId && campaign.ngoId._id) {
                 campaignData.ngoId = campaign.ngoId._id;
             }
@@ -237,10 +234,8 @@ const deleteCampaign = async (req, res) => {
             return res.status(404).json({ success: false, message: "Campaign not found" });
         }
 
-        // Delete the campaign
         await Campaign.findByIdAndDelete(campaignId);
 
-        // Remove campaign from NGO's campaigns array
         await NGO.findByIdAndUpdate(campaign.ngoId, {
             $pull: { campaigns: campaignId }
         });

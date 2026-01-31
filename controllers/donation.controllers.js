@@ -45,7 +45,6 @@ const submitDonation = async (req, res) => {
         campaign.raisedAmount += amount;
         await campaign.save();
 
-        // Update NGO stats
         const ngoUpdate = {
             $inc: { totalRaisedAmount: amount }
         };
@@ -54,7 +53,6 @@ const submitDonation = async (req, res) => {
         }
         await NGO.findByIdAndUpdate(campaign.ngoId._id, ngoUpdate);
 
-        // Update Donor stats
         const donorUpdate = {
             $inc: { totalAmountDonated: amount }
         };
