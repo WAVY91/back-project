@@ -96,7 +96,6 @@ const postNGOSignIn = async (req, res) => {
         id: ngo._id,
         name: ngo.name,
         email: ngo.email,
-        ngoName: ngo.ngoName,
         role: 'ngo',
         registrationStatus: ngo.registrationStatus
         },
